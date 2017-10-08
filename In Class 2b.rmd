@@ -1,0 +1,136 @@
+---
+title: "In Class 2b"
+author: "Manas Thakre"
+date: "10/7/2017"
+output:
+  html_document: 
+      toc: true
+      theme: united
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dplyr)
+library(nycflights13)
+
+```
+
+
+## Plotting : Exploratory data analysis
+
+### Task 1: diamonds data
+
+Using diamonds data, plot the price vs. carat and color the points according to cut. You may want to nuse `sample_n()` to get a subsample  :
+
+```{r }
+ggplot (diamonds %>% sample_n(1000), aes (x = price, y = carat, color = cut)) +
+  geom_point ()
+```
+
+Now plot all datapoints. To make it look better, try setting a small point size and transparency (alpha) value  :
+
+```{r }
+# we use "alpha" for transparency and "size" for size of the point
+
+ggplot (diamonds , aes (x = price, y = carat, color = cut)) +
+  geom_point (alpha = 0.1, size = 0.1)
+```
+
+
+
+### Task 2: Economics data
+
+Using economics data, plot population saving rate (`psavert`) over time  :
+
+```{r }
+ggplot (economics , aes (x = date, y = psavert)) +
+  geom_line(size = 0.3) 
+  
+```
+
+Plot median unemployment duration (`uempmed`) versus unemployment rate (`unemploy`) over time. Normalize both variables so that they are both visible on the plot. (Hint : One easy scheme would be to normalize with respect to period mean) : something like `var` / `mean (var)`
+
+
+```{r }
+
+# Without normalization, if we simply plot the two separate lines, graph looks like this. Notice the uempmed line is so close to x-axis that this creates visibility issue and give a skewed graph
+
+ggplot (economics , aes (x = date)) +
+  geom_line ( aes (y = uempmed)) +
+  geom_line ( aes (y = unemploy))
+  
+```
+
+```{r }
+
+# With normalisation: Essentially here what I did is created two new variables using dplyr's `mutate` package. Both these variables ( "duration" & "norm_unemployed" ) are created from economics data by taking data using pipes and then using mutate to define them as ratio. 
+
+#Note that since date is going to be a common thing for both the lines, I kept date in ggplot() function itself , and then created two separate geom_lines by taking only the respective y axis and just adding a color as well to differentiate them. 
+
+ggplot (economics %>% mutate ( duration = uempmed / mean(uempmed), norm_unemployed = unemploy / mean(unemploy)), aes (x = date)) +
+  geom_line ( aes (y = duration), color = "gold4") +
+  geom_line ( aes (y = norm_unemployed), color = "purple")
+  
+```
+
+Plot median duration of unemployment (uempmed) vs. number of unemployed people (unemploy) using different aesthetic for marking time
+```{r }
+
+# Comment
+
+ggplot (economics, aes ( x = uempmed , y = unemploy, color = date))+
+  geom_point()
+  
+```
+
+
+### Task 3: Colors
+
+Using diamonds data, plot "carat" vs. "price" across cuts using RcolorBrewer palette. For clarity purpose taken subsample of 1000:
+
+```{r }
+ggplot (diamonds %>% sample_n(1000), aes (x = carat, y = price))+
+  geom_point (aes(color = cut))+
+  scale_color_brewer()
+  
+```
+
+
+### Task 4: Smoothers
+
+Using diamonds data, plot "carat" vs. "price" and add smoothers across cuts. Use an RcolorBrewer palette and try tinkering with the aesthetics to get a nice figure
+
+```{r }
+ggplot (diamonds, aes (x = carat, y = price, color = cut))+
+  geom_point (size = 0.3)+
+  scale_color_brewer(palette = "Spectral")+
+  geom_smooth(method = "loess", se = FALSE)+
+  ggtitle('Diamonds data set: "Spectral" Color palette + Smooth method "loess" ')
+  
+  
+```
+
+```{r }
+ggplot (diamonds, aes (x = carat, y = price, color = cut))+
+  geom_point (size = 0.3)+
+  scale_color_brewer(palette = "Spectral")+
+  geom_smooth(method = "lm", se = FALSE)+
+  ggtitle('Diamonds data set: "Spectral" Color palette + Smooth method "lm" ')
+  
+  
+```
+
+```{r }
+ggplot (diamonds, aes (x = carat, y = price, color = cut))+
+  geom_point (size = 0.3)+
+  scale_color_brewer()+
+  geom_smooth(method = "loess", se = FALSE)+
+  ggtitle('Diamonds data set: Default Color palette + Smooth method "loess" ')
+  
+  
+```
+
+
+
