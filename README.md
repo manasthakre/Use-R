@@ -3,4 +3,4 @@ This repository contains several code lines for doing data manipulation and anal
 
 Primarily ggplot2 and parts of dplyr package
 
-[sample ggplot](http://www.quora.com/Adam-DAngelo)
+[sample ggplot](https://manasthakre.github.io/Use-R/In_Class_2b.html)
